@@ -1,0 +1,97 @@
+﻿@model UsersExam
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .result-container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 40px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            border: 4px solid;
+            border-color: @(Model.IsPass ? "#32cd32" : "#ff4500");
+        }
+
+        .result-title {
+            color: @(Model.IsPass ? "#32cd32" : "#ff4500");
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .result-score {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #005cbf;
+        }
+
+        .result-message {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .back-button {
+            background-color: #005cbf;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #003d82;
+            }
+
+        .details-button {
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+        }
+
+            .details-button:hover {
+                background-color: #3a6d99;
+            }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <h1 class="result-title">@(Model.IsPass ? "Congratulations! You Passed!" : "Quiz Failed")</h1>
+        <div class="result-score">
+            Score: @Model.NumOfPoint out of @Model.TotalPoint (@ViewBag.Percent%)
+        </div>
+        <div class="result-message">
+            @(Model.IsPass ?
+                "Great job! You've demonstrated a good understanding of the material." :
+                "Keep studying and try again. You can do better next time!")
+        </div>
+        <button class="back-button" onclick="location.href='/Home/Index'">Back to Home</button>
+        <br>
+    </div>
+</body>
+</html>

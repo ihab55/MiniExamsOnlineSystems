@@ -1,0 +1,130 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj": {}
+  },
+  "projects": {
+    "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj": {
+      "restore": {
+        "projectUniqueName": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj",
+        "projectName": "BussinessLayer",
+        "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net472": {
+            "projectReferences": {
+              "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsDataAccessLayer\\DataAccessLayer.csproj": {
+                "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsDataAccessLayer\\DataAccessLayer.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
+    "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsDataAccessLayer\\DataAccessLayer.csproj": {
+      "restore": {
+        "projectUniqueName": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsDataAccessLayer\\DataAccessLayer.csproj",
+        "projectName": "DataAccessLayer",
+        "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsDataAccessLayer\\DataAccessLayer.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
+    "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj",
+        "projectName": "MiniExamsWeb",
+        "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj",
+        "packagesPath": "C:\\Users\\Ehab\\.nuget\\packages\\",
+        "outputPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Ehab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj": {
+                "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.9.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

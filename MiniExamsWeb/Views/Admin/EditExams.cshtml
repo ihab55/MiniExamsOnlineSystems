@@ -1,0 +1,70 @@
+﻿@model List<Exams>
+
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edit Exams</title>
+	<link href="~/css/EditExamsStyle.css" rel="stylesheet" />
+</head>
+
+<body>
+	<!-- Header -->
+	<header class="admin-header">
+		<h1>Edit Exams</h1>
+		<button class="logout-button" onclick="location.href='/Home/Login'">Logout</button>
+	</header>
+
+	<!-- Exam Form -->
+	<div class="exam-form">
+		<h2>Add Exam</h2>
+		<form action="/Admin/SaveExam" method="get">
+			<input type="text" name="Title" placeholder="Enter exam title" required />
+			<textarea name="Description" placeholder="Enter exam description" required></textarea>
+			<input type="text" name="QuizTime" placeholder="Enter quiz time (e.g.,60 min)" required />
+			<button type="submit" class="action-button">Save Exam</button>
+		</form>
+	</div>
+
+	<!-- Exam Table -->
+	<div class="exam-table">
+		<h2>Exams List</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Description</th>
+					<th>Quiz Time</th>
+					<th>Created Date</th>
+					<th>Created By Admin</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (Exams exam in Model)
+				{
+					<tr>
+						<td>@exam.Title</td>
+						<td>@exam.Description</td>
+						<td>@exam.QuizTime</td>
+						<td>@exam.CreatedDate.ToShortDateString()</td>
+						<td>@exam.AdminName()</td>
+						<td>
+							<form action="/Admin/EditQuestion" method="get" style="display:inline;">
+								<input type="hidden" name="id" value="@exam.ID" />
+								<button type="submit" class="edit-button">Edit</button>
+							</form>
+							<form action="/Admin/DeleteExam?id=@exam.ID" method="post" style="display:inline;">
+								<input type="hidden" name="id" value="@exam.ID" />
+								<button type="submit" class="delete-button">Delete</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="~/css/LoginRegisterStyle.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Login Card -->
+    <div class="login-card">
+        <h2>Welcome Admin</h2>
+        <form id="loginForm" action="/Admin/ActionToLogin" method="post">
+            <input type="text" id="username" name="Username" placeholder="Enter your username" required />
+            <input type="password" id="password" name="Password" placeholder="Enter your password" required />
+            <p style="color:red">@ViewBag.ErrorMessage</p>
+            <button type="submit" class="action-button">Login</button>
+        </form>
+        <p id="errorMessage" class="error-message"></p>
+        <div class="options">
+            <p>Want to join as an User? <a href="/Home/Login">Join as User</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

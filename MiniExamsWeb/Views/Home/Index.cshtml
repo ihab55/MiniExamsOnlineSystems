@@ -1,0 +1,42 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Page</title>
+    <link href="~/css/ExamsStyle.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Exam Website</h1>
+        <div class="nav-container">
+            <nav class="nav-links">
+                <a href="@Url.Action("Index", "Home")">Home</a>
+                <a href="@Url.Action("ViewGrades", "Home")">View Grades</a>
+            </nav>
+            <button class="logout-button" onclick="location.href='/Home/Login'">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1 class="title">Welcome to the Exam Page!</h1>
+        <div class="exam-container">
+            @foreach (Exams exam in Model)
+            {
+                <div class="card">
+                    <h3>Exam Title: @exam.Title</h3>
+                    <p>Description: @exam.Description</p>
+                    <p>Exam Time: @exam.QuizTime</p>
+                    <p>Created Date: @exam.CreatedDate.ToShortDateString()</p>
+                    <p>Created By: @exam.AdminName()</p>
+                    <button onclick="location.href='/Home/TakeExam?id=@exam.ID'" class="action-button">View Exam Details</button>
+                </div>
+            }
+        </div>
+    </main>
+</body>
+</html>

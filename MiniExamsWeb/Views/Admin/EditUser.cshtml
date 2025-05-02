@@ -1,0 +1,191 @@
+﻿@model List<Users>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Users</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eeeeee;
+        }
+
+        /* Header Styling */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #005cbf; /* Pepsi blue */
+            color: white;
+        }
+
+            .admin-header h1 {
+                margin: 0;
+                font-size: 2em;
+            }
+
+        .logout-button {
+            background-color: #ff4500; /* Bright orange */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+            .logout-button:hover {
+                background-color: #ff6347; /* Lighter orange */
+            }
+
+        /* Card Styling */
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1000px;
+            border: 4px solid #005cbf; /* Pepsi blue border */
+        }
+
+            .card h2 {
+                color: #005cbf;
+                margin-top: 0;
+            }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input, select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #005cbf;
+            font-family: inherit;
+        }
+
+        /* Button Styling */
+        .action-button {
+            background-color: #32cd32; /* Lime green */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+            .action-button:hover {
+                background-color: #228b22; /* Forest green */
+            }
+
+        .delete-button {
+            background-color: #ff4500; /* Bright orange */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .delete-button:hover {
+                background-color: #cc3700; /* Darker orange */
+            }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #005cbf;
+        }
+
+        th {
+            background-color: #005cbf;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e6f7ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <h1>Edit Users</h1>
+        <a href="/Home/Login"><button class="logout-button">Logout</button></a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Add/Edit User Card -->
+        <div class="card">
+            <h2>Add/Edit User</h2>
+            <form action="/Admin/ActionAddOrEdit" method="post">
+                <input type="text" name="UserName" placeholder="Enter username" required />
+                <input type="password" name="PassWord" placeholder="Enter password" required />
+                <select name="IsAdmin">
+                    <option value="false">Regular User</option>
+                    <option value="true">Admin</option>
+                </select>
+                <button type="submit" class="action-button">Save User</button>
+            </form>
+        </div>
+
+        <!-- Users List Card -->
+        <div class="card">
+            <h2>Users List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>UserName</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Users user in Model)
+                    {
+                        <tr>
+                            <td>@user.UserName</td>
+                            <td>@user.PassWord</td>
+                            <td>@(user.IsAdmin ? "Admin" : "Regular User")</td>
+                            <td>
+                                <form action="/Admin/DeleteUser" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.ID" />
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+﻿
+/* General Body Styling */
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Login Card Styling */
+.login-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding: 40px;
+    width: 400px;
+    text-align: center;
+    border: 4px solid #005cbf; /* Pepsi blue border */
+}
+
+    .login-card h2 {
+        font-size: 2em;
+        color: #005cbf; /* Pepsi blue */
+        margin-bottom: 20px;
+    }
+
+    .login-card input {
+        width: 90%;
+        padding: 15px;
+        margin: 15px 0;
+        border: 2px solid #005cbf; /* Pepsi blue border */
+        border-radius: 8px;
+        font-size: 1.2em;
+        font-family: inherit;
+    }
+
+.action-button {
+    background-color: #005cbf; /* Pepsi blue */
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-family: inherit;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+    .action-button:hover {
+        background-color: #003d82; /* Darker Pepsi blue */
+    }
+
+.error-message {
+    color: #ff4500; /* Bright orange for error text */
+    font-size: 1em;
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+/* Options Styling */
+.options {
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+    .options a {
+        color: #005cbf; /* Pepsi blue */
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .options a:hover {
+            text-decoration: underline;
+        }

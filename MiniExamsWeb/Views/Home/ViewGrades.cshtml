@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Exam Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #005cbf;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #005cbf;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background-color: #f0f8ff;
+        }
+
+        .pass {
+            color: #32cd32;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: #ff4500;
+            font-weight: bold;
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button, select, input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #005cbf;
+        }
+
+        button {
+            background-color: #005cbf;
+            color: white;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #003d82;
+            }
+
+        .percentage {
+            font-weight: bold;
+        }
+
+        .hidden-row {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Users Exam Results</h1>
+
+        <div class="controls">
+            <select id="filterStatus">
+                <option value="all">All Results</option>
+                <option value="pass">Passed Only</option>
+                <option value="fail">Failed Only</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search users or exams...">
+        </div>
+
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Exam Title</th>
+                    <th>Points Earned</th>
+                    <th>Total Points</th>
+                    <th>Percentage</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (ViewModelData data in Model)
+                {
+                    <tr class="data-row"
+                        data-username="@data.Username.ToLower()"
+                        data-examtitle="@data.ExamTitle.ToLower()"
+                        data-status="@(data.Status ? "pass" : "fail")">
+                        <td>@data.ID</td>
+                        <td>@data.Username</td>
+                        <td>@data.ExamTitle</td>
+                        <td>@data.Score</td>
+                        <td>@data.TotalPoint</td>
+                        <td class="percentage">@data.Percentage.ToString("0.0")%</td>
+                        <td class="@(data.Status ? "pass" : "fail")">@(data.Status ? "Pass" : "Fail")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Function to filter data
+        function filterData() {
+            const statusFilter = document.getElementById('filterStatus').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.data-row');
+
+            rows.forEach(row => {
+                const username = row.getAttribute('data-username');
+                const examTitle = row.getAttribute('data-examtitle');
+                const status = row.getAttribute('data-status');
+
+                // Check status filter
+                const statusMatch = statusFilter === 'all' ||
+                                  (statusFilter === 'pass' && status === 'pass') ||
+                                  (statusFilter === 'fail' && status === 'fail');
+
+                // Check search term
+                const searchMatch = searchTerm === '' ||
+                                  username.includes(searchTerm) ||
+                                  examTitle.includes(searchTerm);
+
+                // Show/hide row based on filters
+                if (statusMatch && searchMatch) {
+                    row.classList.remove('hidden-row');
+                } else {
+                    row.classList.add('hidden-row');
+                }
+            });
+        }
+
+        // Event listeners for filters
+        document.getElementById('filterStatus').addEventListener('change', filterData);
+        document.getElementById('searchInput').addEventListener('input', filterData);
+
+        // Initialize by filtering once when page loads
+        document.addEventListener('DOMContentLoaded', filterData);
+    </script>
+</body>
+</html>

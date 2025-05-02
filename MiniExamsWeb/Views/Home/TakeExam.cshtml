@@ -1,0 +1,207 @@
+﻿@model Exams
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Page</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Header Styling */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #005cbf; /* Pepsi blue */
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+            .quiz-header h1 {
+                margin: 0;
+                font-size: 2em;
+            }
+
+        .logout-button {
+            background-color: #ff4500; /* Bright orange */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: inherit;
+            transition: background-color 0.3s ease;
+        }
+
+            .logout-button:hover {
+                background-color: #ff6347; /* Lighter orange */
+            }
+
+        /* Timer Styling */
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff4500;
+            margin-right: 20px;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Question Card Styling */
+        .question-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 4px solid #005cbf; /* Pepsi blue border */
+        }
+
+            .question-card h3 {
+                color: #005cbf;
+                margin-top: 0;
+                margin-bottom: 20px;
+                font-size: 1.5em;
+            }
+
+        /* Answer Options */
+        .answer-option {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+            .answer-option input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                height: 0;
+                width: 0;
+            }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            border-radius: 50%;
+            border: 2px solid #005cbf;
+        }
+
+        .answer-option:hover input ~ .checkmark {
+            background-color: #e6f7ff;
+        }
+
+        .answer-option input:checked ~ .checkmark {
+            background-color: #005cbf;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .answer-option input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .answer-option .checkmark:after {
+            top: 7px;
+            left: 7px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        /* Submit Button Styling */
+        .submit-button {
+            background-color: #005cbf; /* Pepsi blue */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin: 30px auto;
+            display: block;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+            .submit-button:hover {
+                background-color: #003d82; /* Darker Pepsi blue */
+            }
+
+        /* Progress Indicator */
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            color: #005cbf;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header remains the same -->
+    <!-- Quiz Container -->
+    <div class="quiz-container">
+        <div class="progress">Total Questions: @Model.questions.Count</div>
+
+        <form action="/Home/ExamSubmit" method="post">
+            <input type="hidden" name="ExamID" value="@Model.ID" />
+
+            @{
+                int questionNumber = 1;
+            }
+            @foreach (Questions question in Model.questions)
+            {
+                <div class="question-card">
+                    <h3>Question @(questionNumber++): @question.Text</h3>
+
+                    @for (int i = 0; i < question.Options.Count; i++)
+                    {
+                        <label class="answer-option @(i+1 == question.CorrectAnswer ? "correct-answer" : "")">
+                            <!-- Group radio buttons by question ID -->
+                            <input type="radio" name="UserAnswers[@question.ID]" value="@(i+1)" required />
+                            <span class="checkmark"></span>
+                            @question.Options[i]
+                        </label>
+                    }
+                </div>
+            }
+
+            <button type="submit" class="submit-button">Submit Quiz</button>
+        </form>
+    </div>
+
+    <script>
+        // Timer functionality remains the same
+
+        // No need for manual radio button grouping - the name attribute handles it
+    </script>
+</body>
+</html>
