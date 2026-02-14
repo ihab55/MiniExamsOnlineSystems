@@ -5,66 +5,80 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using DataAccessLayer.DTOs;
 
 namespace DataAccessLayer
 {
     public static class clsExams
     {
-        public static DataTable GetAllExams()
+        public static List<ExamDTO> GetAllExams()
         {
-            DataTable dtExams = new DataTable();
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = " SELECT * FROM Exams";
-            SqlCommand command = new SqlCommand(query, connection);
-            try
+            var examsList = new List<ExamDTO>();
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                dtExams.Load(reader);
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                dtExams = null;
-            }
-            finally
-            {
-                connection.Close();
-            }
-            return dtExams;
-        }
-        public static bool GetExamByID(int ID, ref string Title, ref string Description, ref int QuizTime,
-            ref DateTime CreateDate, ref int CreatedByAdmin)
-        {
-            bool IsFounded = false;
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT * FROM [dbo].[Exams] Where ID = @ID";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ID", ID);
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
+                string query = @"
+                    SELECT E.*, U.Username as AdminName 
+                    FROM Exams E 
+                    LEFT JOIN Users U ON E.CreatedByAdminID = U.ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                try
                 {
-                    Title = (string)reader["Title"];
-                    Description = (string)reader["Description"];
-                    QuizTime = (int)reader["QuizTime"];
-                    CreateDate = (DateTime)reader["CreatedDate"];
-                    CreatedByAdmin = (int)reader["CreatedByAdminID"];
-                    IsFounded = true;
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        examsList.Add(new ExamDTO
+                        {
+                            ID = (int)reader["ID"],
+                            Title = (string)reader["Title"],
+                            Description = (string)reader["Description"],
+                            QuizTime = (int)reader["QuizTime"],
+                            CreatedDate = (DateTime)reader["CreatedDate"],
+                            CreatedByAdminID = (int)reader["CreatedByAdminID"],
+                            AdminName = reader["AdminName"] != DBNull.Value ? (string)reader["AdminName"] : "Unknown"
+                        });
+                    }
+                    reader.Close();
                 }
-                reader.Close();
+                catch (Exception ex) { }
             }
-            catch (Exception ex)
+            return examsList;
+        }
+
+        public static ExamDTO GetExamByID(int ID)
+        {
+            ExamDTO exam = null;
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
             {
-                IsFounded = false;
+                string query = @"
+                    SELECT E.*, U.Username as AdminName 
+                    FROM Exams E 
+                    LEFT JOIN Users U ON E.CreatedByAdminID = U.ID 
+                    WHERE E.ID = @ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ID", ID);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        exam = new ExamDTO
+                        {
+                            ID = (int)reader["ID"],
+                            Title = (string)reader["Title"],
+                            Description = (string)reader["Description"],
+                            QuizTime = (int)reader["QuizTime"],
+                            CreatedDate = (DateTime)reader["CreatedDate"],
+                            CreatedByAdminID = (int)reader["CreatedByAdminID"],
+                            AdminName = reader["AdminName"] != DBNull.Value ? (string)reader["AdminName"] : "Unknown"
+                        };
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
             }
-            finally
-            {
-                connection.Close();
-            }
-            return IsFounded;
+            return exam;
         }
 
         public static int AddExam(string Title, string Description, int QuizTime, DateTime CreateDate, int CreatedByAdmin)

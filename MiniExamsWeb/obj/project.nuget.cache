@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yaBzJWli1Po=",
+  "dgSpecHash": "pvgCoLZkQ9g=",
   "success": true,
-  "projectFilePath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj",
+  "projectFilePath": "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\MiniExamsWeb\\MiniExamsWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Ehab\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Ehab\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

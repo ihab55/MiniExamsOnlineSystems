@@ -1,207 +1,115 @@
-﻿@model Exams
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Page</title>
-    <style>
-        /* General Body Styling */
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+﻿@using BussinessLayer
+@model Exams
+@{
+    ViewData["Title"] = "Taking Exam: " + Model.Title;
+}
 
-        /* Header Styling */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #005cbf; /* Pepsi blue */
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+<div class="animate-fade-in" style="max-width: 900px; margin: 0 auto;">
+    <!-- Exam Header with Progress -->
+    <div class="card" style="margin-bottom: 2rem; border-left: 5px solid var(--accent-primary); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 1rem; z-index: 100; backdrop-filter: blur(15px); background: rgba(30, 41, 59, 0.95);">
+        <div>
+            <h1 style="font-size: 1.75rem; margin-bottom: 0.25rem;">@Model.Title</h1>
+            <div style="display: flex; gap: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                <span><i class="far fa-list-alt" style="margin-right: 5px;"></i> Questions: <strong>@Model.questions.Count</strong></span>
+                <span><i class="far fa-user" style="margin-right: 5px;"></i> Examinee: <strong>Candidate</strong></span>
+            </div>
+        </div>
+        
+        <div style="text-align: center; background: rgba(239, 68, 68, 0.1); padding: 0.75rem 1.5rem; border-radius: var(--radius-lg); border: 1px solid rgba(239, 68, 68, 0.2);">
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--danger); font-weight: 700;">Remaining Time</div>
+            <div id="countdown" style="font-size: 1.75rem; font-weight: 800; color: var(--danger); font-family: 'Inter', monospace;">00:00</div>
+        </div>
+    </div>
 
-            .quiz-header h1 {
-                margin: 0;
-                font-size: 2em;
-            }
+    <!-- Instructions / Status -->
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; padding: 0 1rem; color: var(--text-muted); font-size: 0.9rem;">
+        <i class="fas fa-info-circle"></i>
+        <span>Answers are auto-saved locally. Press <b>Submit Assessment</b> when you are finished.</span>
+    </div>
 
-        .logout-button {
-            background-color: #ff4500; /* Bright orange */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-family: inherit;
-            transition: background-color 0.3s ease;
-        }
+    <form action="/Home/ExamSubmit" method="post" id="examForm">
+        <input type="hidden" name="ExamID" value="@Model.ID" />
 
-            .logout-button:hover {
-                background-color: #ff6347; /* Lighter orange */
-            }
+        @{ int questionIndex = 1; }
+        @foreach (Questions question in Model.questions)
+        {
+            <div class="card question-card-modern" style="margin-bottom: 2rem; padding: 2.5rem; border: 1px solid var(--border-color); transition: all 0.3s; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; padding: 8px 20px; background: var(--bg-primary); color: var(--text-muted); font-size: 0.8rem; font-weight: 700; border-bottom-right-radius: 12px; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+                    Question @questionIndex
+                </div>
+                
+                <h3 style="font-size: 1.35rem; margin: 1rem 0 2rem 0; line-height: 1.5; color: var(--text-primary);">
+                    @question.Text
+                </h3>
 
-        /* Timer Styling */
-        .timer {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #ff4500;
-            margin-right: 20px;
-        }
-
-        /* Quiz Container Styling */
-        .quiz-container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Question Card Styling */
-        .question-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 4px solid #005cbf; /* Pepsi blue border */
-        }
-
-            .question-card h3 {
-                color: #005cbf;
-                margin-top: 0;
-                margin-bottom: 20px;
-                font-size: 1.5em;
-            }
-
-        /* Answer Options */
-        .answer-option {
-            display: block;
-            position: relative;
-            padding-left: 35px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            font-size: 1.1em;
-            color: #333;
-        }
-
-            .answer-option input {
-                position: absolute;
-                opacity: 0;
-                cursor: pointer;
-                height: 0;
-                width: 0;
-            }
-
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 25px;
-            width: 25px;
-            background-color: #eee;
-            border-radius: 50%;
-            border: 2px solid #005cbf;
-        }
-
-        .answer-option:hover input ~ .checkmark {
-            background-color: #e6f7ff;
-        }
-
-        .answer-option input:checked ~ .checkmark {
-            background-color: #005cbf;
-        }
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
-
-        .answer-option input:checked ~ .checkmark:after {
-            display: block;
-        }
-
-        .answer-option .checkmark:after {
-            top: 7px;
-            left: 7px;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: white;
-        }
-
-        /* Submit Button Styling */
-        .submit-button {
-            background-color: #005cbf; /* Pepsi blue */
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            margin: 30px auto;
-            display: block;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-            .submit-button:hover {
-                background-color: #003d82; /* Darker Pepsi blue */
-            }
-
-        /* Progress Indicator */
-        .progress {
-            text-align: center;
-            margin: 20px 0;
-            color: #005cbf;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header remains the same -->
-    <!-- Quiz Container -->
-    <div class="quiz-container">
-        <div class="progress">Total Questions: @Model.questions.Count</div>
-
-        <form action="/Home/ExamSubmit" method="post">
-            <input type="hidden" name="ExamID" value="@Model.ID" />
-
-            @{
-                int questionNumber = 1;
-            }
-            @foreach (Questions question in Model.questions)
-            {
-                <div class="question-card">
-                    <h3>Question @(questionNumber++): @question.Text</h3>
-
+                <div style="display: grid; gap: 12px;">
                     @for (int i = 0; i < question.Options.Count; i++)
                     {
-                        <label class="answer-option @(i+1 == question.CorrectAnswer ? "correct-answer" : "")">
-                            <!-- Group radio buttons by question ID -->
-                            <input type="radio" name="UserAnswers[@question.ID]" value="@(i+1)" required />
-                            <span class="checkmark"></span>
-                            @question.Options[i]
+                        var optionValue = i + 1;
+                        <label class="option-container" style="display: flex; align-items: center; gap: 15px; padding: 1.25rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                            <input type="radio" name="UserAnswers[@question.ID]" value="@optionValue" required 
+                                   style="width: 20px; height: 20px; accent-color: var(--accent-primary);" />
+                            <span style="font-size: 1rem; color: var(--text-secondary);">@question.Options[i]</span>
                         </label>
                     }
                 </div>
+            </div>
+            questionIndex++;
+        }
+
+        <div style="margin-top: 3rem; padding: 2rem; text-align: center; border-top: 1px solid var(--border-color);">
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Double check all your answers before submitting.</p>
+            <button type="submit" class="btn-primary" 
+                    style="background: var(--accent-gradient); min-width: 250px; padding: 1.25rem 2.5rem; font-size: 1.1rem; border-radius: var(--radius-lg); border: none; font-weight: 700; cursor: pointer; box-shadow: var(--glow-primary);">
+                Submit Assessment <i class="fas fa-paper-plane" style="margin-left: 10px;"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <style>
+        .option-container:hover {
+            background: rgba(56, 189, 248, 0.05) !important;
+            border-color: rgba(56, 189, 248, 0.3) !important;
+        }
+        .option-container:has(input:checked) {
+            background: rgba(56, 189, 248, 0.1) !important;
+            border-color: var(--accent-primary) !important;
+        }
+        .option-container:has(input:checked) span {
+            color: white !important;
+            font-weight: 600;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Professional Timer Implementation
+        let timeLeft = @(Model.QuizTime * 60);
+        const display = document.querySelector('#countdown');
+        const form = document.querySelector('#examForm');
+
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 300) { // Last 5 minutes
+                display.style.animation = 'pulse 1s infinite';
             }
 
-            <button type="submit" class="submit-button">Submit Quiz</button>
-        </form>
-    </div>
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Time is up! Your exam will be submitted automatically.");
+                form.submit();
+            }
+            timeLeft--;
+        }
 
-    <script>
-        // Timer functionality remains the same
-
-        // No need for manual radio button grouping - the name attribute handles it
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
     </script>
-</body>
-</html>
+}

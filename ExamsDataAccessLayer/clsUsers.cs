@@ -5,55 +5,98 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.DTOs;
 
 namespace DataAccessLayer
 {
     public static class clsUsers
     {
-        public static DataTable GetAllUsers()
+        public static List<UserDTO> GetAllUsers()
         {
-            DataTable dtUsers = new DataTable();
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT * FROM Users";
-            SqlCommand command = new SqlCommand(query, connection);
-            try
+            var userList = new List<UserDTO>();
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                dtUsers.Load(reader);
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                dtUsers = null;
-            }
-            finally { connection.Close(); }
-            return dtUsers;
-        }
-        public static bool GetUserByID(int id, ref string userNaem, ref string password, ref bool isAdmin)
-        {
-            bool IsFouned = false;
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT *  FROM Users Where ID =@ID";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ID", id);
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
+                string query = "SELECT * FROM Users";
+                SqlCommand command = new SqlCommand(query, connection);
+                try
                 {
-                    userNaem = (string)reader["UserName"];
-                    password = (string)reader["Password"];
-                    isAdmin = (bool)reader["IsAdmin"];
-                    IsFouned = true;
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        userList.Add(new UserDTO
+                        {
+                            ID = (int)reader["ID"],
+                            UserName = (string)reader["UserName"],
+                            PassWord = (string)reader["Password"],
+                            IsAdmin = (bool)reader["IsAdmin"]
+                        });
+                    }
+                    reader.Close();
                 }
-                reader.Close();
+                catch (Exception ex) { }
             }
-            catch (Exception ex) { IsFouned = false; }
-            finally { connection.Close(); }
-            return IsFouned;
+            return userList;
         }
+
+        public static UserDTO GetUserByID(int ID)
+        {
+            UserDTO user = null;
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
+            {
+                string query = "SELECT * FROM Users WHERE ID = @ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ID", ID);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        user = new UserDTO
+                        {
+                            ID = (int)reader["ID"],
+                            UserName = (string)reader["UserName"],
+                            PassWord = (string)reader["Password"],
+                            IsAdmin = (bool)reader["IsAdmin"]
+                        };
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
+            }
+            return user;
+        }
+
+        public static UserDTO GetUserByUserName(string UserName)
+        {
+            UserDTO user = null;
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
+            {
+                string query = "SELECT * FROM Users WHERE UserName = @UserName";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@UserName", UserName);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        user = new UserDTO
+                        {
+                            ID = (int)reader["ID"],
+                            UserName = (string)reader["UserName"],
+                            PassWord = (string)reader["Password"],
+                            IsAdmin = (bool)reader["IsAdmin"]
+                        };
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
+            }
+            return user;
+        }
+
         public static int AddUsers(string username, string password, bool IsAdmin = false)
         {
             int id = -99;
@@ -152,30 +195,6 @@ namespace DataAccessLayer
             catch (Exception ex) { IsExsist = false; }
             finally { connection.Close(); }
             return IsExsist;
-        }
-        public static bool GetUserByUserName(string username, ref int id, ref string password, ref bool isAdmin)
-        {
-            bool IsFouned = false;
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT *  FROM Users Where UserName =@UserName";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@UserName", username);
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    id = (int)reader["ID"];
-                    password = (string)reader["Password"];
-                    isAdmin = (bool)reader["IsAdmin"];
-                    IsFouned = true;
-                }
-                reader.Close();
-            }
-            catch (Exception ex) { IsFouned = false; }
-            finally { connection.Close(); }
-            return IsFouned;
         }
     }
 }

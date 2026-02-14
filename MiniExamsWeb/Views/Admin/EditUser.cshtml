@@ -1,184 +1,150 @@
-﻿@model List<Users>
+﻿@using BussinessLayer
+@model List<Users>
+@{
+    ViewData["Title"] = "Manage Users";
+}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Users</title>
-    <style>
-        /* General Body Styling */
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #eeeeee;
-        }
-
-        /* Header Styling */
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #005cbf; /* Pepsi blue */
-            color: white;
-        }
-
-            .admin-header h1 {
-                margin: 0;
-                font-size: 2em;
-            }
-
-        .logout-button {
-            background-color: #ff4500; /* Bright orange */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-            .logout-button:hover {
-                background-color: #ff6347; /* Lighter orange */
-            }
-
-        /* Card Styling */
-        .card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            padding: 30px;
-            margin: 20px auto;
-            max-width: 1000px;
-            border: 4px solid #005cbf; /* Pepsi blue border */
-        }
-
-            .card h2 {
-                color: #005cbf;
-                margin-top: 0;
-            }
-
-        /* Form Styling */
-        form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-        }
-
-        input, select {
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #005cbf;
-            font-family: inherit;
-        }
-
-        /* Button Styling */
-        .action-button {
-            background-color: #32cd32; /* Lime green */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-            .action-button:hover {
-                background-color: #228b22; /* Forest green */
-            }
-
-        .delete-button {
-            background-color: #ff4500; /* Bright orange */
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-            .delete-button:hover {
-                background-color: #cc3700; /* Darker orange */
-            }
-
-        /* Table Styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid #005cbf;
-        }
-
-        th {
-            background-color: #005cbf;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #e6f7ff;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="admin-header">
-        <h1>Edit Users</h1>
-        <a href="/Home/Login"><button class="logout-button">Logout</button></a>
-    </header>
-
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Add/Edit User Card -->
-        <div class="card">
-            <h2>Add/Edit User</h2>
-            <form action="/Admin/ActionAddOrEdit" method="post">
-                <input type="text" name="UserName" placeholder="Enter username" required />
-                <input type="password" name="PassWord" placeholder="Enter password" required />
-                <select name="IsAdmin">
-                    <option value="false">Regular User</option>
-                    <option value="true">Admin</option>
-                </select>
-                <button type="submit" class="action-button">Save User</button>
-            </form>
+<div class="animate-fade-in">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">User Management</h1>
+            <p style="color: var(--text-secondary);">Register and manage system administrators and regular users.</p>
         </div>
+        <button class="btn-primary" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                style="background: var(--accent-gradient); border: none; padding: 12px 24px; border-radius: var(--radius-md); color: white; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: var(--glow-primary);">
+            <i class="fas fa-user-plus"></i> Quick Add
+        </button>
+    </div>
 
-        <!-- Users List Card -->
-        <div class="card">
-            <h2>Users List</h2>
-            <table>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(129, 140, 248, 0.1); color: var(--accent-secondary);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count</div>
+                <div class="label">Total Users</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count(u => u.IsAdmin)</div>
+                <div class="label">Administrators</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary);">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count(u => !u.IsAdmin)</div>
+                <div class="label">Regular Users</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Form -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="padding-bottom: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-cog" style="color: var(--accent-primary);"></i> Add or Refine User
+            </h3>
+        </div>
+        <form action="/Admin/ActionAddOrEdit" method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: flex-end;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Username</label>
+                <input type="text" name="UserName" placeholder="Unique identifier" required 
+                       style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; transition: all 0.2s;"
+                       onfocus="this.style.borderColor='var(--accent-primary)'; this.style.boxShadow='0 0 0 2px rgba(56, 189, 248, 0.1)'" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'" />
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Secure Password</label>
+                <input type="password" name="PassWord" placeholder="••••••••" required 
+                       style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; transition: all 0.2s;"
+                       onfocus="this.style.borderColor='var(--accent-primary)'; this.style.boxShadow='0 0 0 2px rgba(56, 189, 248, 0.1)'" onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'" />
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Access Level</label>
+                <select name="IsAdmin" 
+                        style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; cursor: pointer;">
+                    <option value="false">Standard Member</option>
+                    <option value="true">System Admin</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" 
+                        style="width: 100%; background: var(--accent-gradient); border: none; padding: 12px; border-radius: var(--radius-md); color: white; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--glow-primary)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <i class="fas fa-save" style="margin-right: 8px;"></i> Commit Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Users Table Container -->
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-list" style="color: var(--accent-secondary);"></i> System Directory
+            </h3>
+            <span style="font-size: 0.8rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; color: var(--text-secondary);">
+                @Model.Count Entries found
+            </span>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="premium-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
-                    <tr>
-                        <th>UserName</th>
-                        <th>Password</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                    <tr style="text-align: left; background: rgba(255,255,255,0.02);">
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Identity</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Passcode Hint</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Role & Status</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500; text-align: right;">Operations</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (Users user in Model)
+                    @foreach (var user in Model)
                     {
-                        <tr>
-                            <td>@user.UserName</td>
-                            <td>@user.PassWord</td>
-                            <td>@(user.IsAdmin ? "Admin" : "Regular User")</td>
-                            <td>
-                                <form action="/Admin/DeleteUser" method="get" style="display:inline;">
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: @(user.IsAdmin ? "rgba(129, 140, 248, 0.1)" : "rgba(255,255,255,0.05)"); color: @(user.IsAdmin ? "var(--accent-secondary)" : "var(--text-secondary)"); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas @(user.IsAdmin ? "fa-user-shield" : "fa-user")"></i>
+                                    </div>
+                                    <span style="font-weight: 600;">@user.UserName</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <code style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; color: var(--text-muted); font-family: monospace;">
+                                    @(user.PassWord.Length > 2 ? user.PassWord.Substring(0, 2) + new string('•', user.PassWord.Length - 2) : "••••")
+                                </code>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                @if (user.IsAdmin)
+                                {
+                                    <span style="background: rgba(129, 140, 248, 0.1); color: var(--accent-secondary); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Administrator
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                        Member
+                                    </span>
+                                }
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: right;">
+                                <form action="/Admin/DeleteUser" method="get" style="display:inline;" onsubmit="return confirm('Attention: Deleting this user is permanent. Proceed?')">
                                     <input type="hidden" name="id" value="@user.ID" />
-                                    <button type="submit" class="delete-button">Delete</button>
+                                    <button type="submit" 
+                                            style="padding: 10px; border-radius: 10px; background: rgba(239, 68, 68, 0.08); color: var(--danger); border: none; cursor: pointer; transition: all 0.2s;"
+                                            onmouseover="this.style.background='var(--danger)'; this.style.color='white'"
+                                            onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.color='var(--danger)'">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -187,5 +153,4 @@
             </table>
         </div>
     </div>
-</body>
-</html>
+</div>

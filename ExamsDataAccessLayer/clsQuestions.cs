@@ -5,58 +5,108 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.DTOs;
 
 namespace DataAccessLayer
 {
     public class clsQuestions
     {
-        public static DataTable GetAllQuestions()
+        public static List<QuestionDTO> GetAllQuestions()
         {
-            DataTable dtQuestions = new DataTable();
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT * FROM Questions";
-            SqlCommand command = new SqlCommand(query, connection);
-            try
+            var questionList = new List<QuestionDTO>();
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                dtQuestions.Load(reader);
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                dtQuestions = null;
-            }
-            finally { connection.Close(); }
-            return dtQuestions;
-        }
-        public static bool GetQuestionByID(int id, ref string text, List<string> options, ref int correctans, ref int examid)
-        {
-            bool IsFouned = false;
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT * FROM Questions Where ID = @ID";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ID", id);
-            try
-            {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
+                string query = "SELECT * FROM Questions";
+                SqlCommand command = new SqlCommand(query, connection);
+                try
                 {
-                    text = (string)reader["Text"];
-                    options[0] = (string)reader["Option1"];
-                    options[1] = (string)reader["Option2"];
-                    options[2] = (string)reader["Option3"];
-                    options[3] = (string)reader["Option4"];
-                    correctans = (int)reader["CorrectAnswer"];
-                    examid = (int)reader["ExamID"];
-                    IsFouned = true;
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        questionList.Add(new QuestionDTO
+                        {
+                            ID = (int)reader["ID"],
+                            ExamID = (int)reader["ExamID"],
+                            Text = (string)reader["Text"],
+                            Option1 = (string)reader["Option1"],
+                            Option2 = (string)reader["Option2"],
+                            Option3 = (string)reader["Option3"],
+                            Option4 = (string)reader["Option4"],
+                            CorrectAnswer = (int)reader["CorrectAnswer"]
+                        });
+                    }
+                    reader.Close();
                 }
-                reader.Close();
+                catch (Exception ex) { }
             }
-            catch (Exception ex) { IsFouned = false; }
-            finally { connection.Close(); }
-            return IsFouned;
+            return questionList;
+        }
+
+        public static List<QuestionDTO> GetAllQuestionsInExam(int ExamID)
+        {
+            var questionList = new List<QuestionDTO>();
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
+            {
+                string query = "SELECT * FROM Questions WHERE ExamID = @ExamID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ExamID", ExamID);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        questionList.Add(new QuestionDTO
+                        {
+                            ID = (int)reader["ID"],
+                            ExamID = (int)reader["ExamID"],
+                            Text = (string)reader["Text"],
+                            Option1 = (string)reader["Option1"],
+                            Option2 = (string)reader["Option2"],
+                            Option3 = (string)reader["Option3"],
+                            Option4 = (string)reader["Option4"],
+                            CorrectAnswer = (int)reader["CorrectAnswer"]
+                        });
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
+            }
+            return questionList;
+        }
+
+        public static QuestionDTO GetQuestionByID(int ID)
+        {
+            QuestionDTO question = null;
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
+            {
+                string query = "SELECT * FROM Questions WHERE ID = @ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@ID", ID);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        question = new QuestionDTO
+                        {
+                            ID = (int)reader["ID"],
+                            ExamID = (int)reader["ExamID"],
+                            Text = (string)reader["Text"],
+                            Option1 = (string)reader["Option1"],
+                            Option2 = (string)reader["Option2"],
+                            Option3 = (string)reader["Option3"],
+                            Option4 = (string)reader["Option4"],
+                            CorrectAnswer = (int)reader["CorrectAnswer"]
+                        };
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
+            }
+            return question;
         }
         public static int AddQuestions(string Text, List<string> options, int correctans, int examid)
         {

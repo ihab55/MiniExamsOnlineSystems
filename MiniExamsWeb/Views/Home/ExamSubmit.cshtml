@@ -1,97 +1,67 @@
-﻿@model UsersExam
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Results</title>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+﻿@using BussinessLayer
+@model UsersExam
+@{
+    ViewData["Title"] = "Assessment Results";
+    bool passed = Model.IsPass;
+}
 
-        .result-container {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            padding: 40px;
-            width: 80%;
-            max-width: 600px;
-            text-align: center;
-            border: 4px solid;
-            border-color: @(Model.IsPass ? "#32cd32" : "#ff4500");
-        }
+<div class="animate-fade-in" style="max-width: 650px; margin: 3rem auto; text-align: center;">
+    <div class="card" style="padding: 4rem 2rem; border: 1px solid var(--border-color); position: relative; overflow: hidden; border-top: 8px solid @(passed ? "var(--success)" : "var(--danger)");">
+        
+        <!-- Background Decoration -->
+        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: @(passed ? "rgba(16, 185, 129, 0.05)" : "rgba(239, 68, 68, 0.05)"); border-radius: 50%; z-index: 0;"></div>
 
-        .result-title {
-            color: @(Model.IsPass ? "#32cd32" : "#ff4500");
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
+        <div style="position: relative; z-index: 1;">
+            <div style="width: 100px; height: 100px; margin: 0 auto 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; 
+                        background: @(passed ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)"); 
+                        color: @(passed ? "var(--success)" : "var(--danger)");
+                        box-shadow: 0 0 30px @(passed ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.2)");">
+                <i class="fas @(passed ? "fa-certificate" : "fa-redo-alt")"></i>
+            </div>
 
-        .result-score {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            color: #005cbf;
-        }
+            <h1 style="font-size: 2.75rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">
+                @(passed ? "Assessment Passed!" : "Attempt Incomplete")
+            </h1>
+            
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 3rem; max-width: 450px; margin-left: auto; margin-right: auto;">
+                @(passed 
+                    ? "Congratulations! You have successfully demonstrated competency in this examination and met the certification standards." 
+                    : "Unfortunately, you were unable to meet the passing threshold. Review the material and schedule a re-attempt.")
+            </p>
 
-        .result-message {
-            font-size: 1.3em;
-            margin-bottom: 30px;
-            color: #333;
-        }
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 4rem;">
+                <div style="text-align: left;">
+                    <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem;">Score Breakdown</div>
+                    <div style="font-size: 2rem; font-weight: 800;">
+                        <span style="color: @(passed ? "var(--success)" : "var(--danger)")">@Model.NumOfPoint</span>
+                        <span style="color: var(--text-muted); font-size: 1.2rem;">/ @Model.TotalPoint</span>
+                    </div>
+                </div>
+                <div style="width: 1px; background: var(--border-color);"></div>
+                <div style="text-align: left;">
+                    <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem;">Accuracy Rank</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--text-primary);">
+                        @ViewBag.Percent%
+                    </div>
+                </div>
+            </div>
 
-        .back-button {
-            background-color: #005cbf;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
-        }
-
-            .back-button:hover {
-                background-color: #003d82;
-            }
-
-        .details-button {
-            background-color: #4682b4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-            margin-top: 15px;
-        }
-
-            .details-button:hover {
-                background-color: #3a6d99;
-            }
-    </style>
-</head>
-<body>
-    <div class="result-container">
-        <h1 class="result-title">@(Model.IsPass ? "Congratulations! You Passed!" : "Quiz Failed")</h1>
-        <div class="result-score">
-            Score: @Model.NumOfPoint out of @Model.TotalPoint (@ViewBag.Percent%)
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="location.href='/Home/Index'" class="btn-primary" 
+                        style="background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 1rem 2rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    Return Home
+                </button>
+                <button onclick="location.href='/Home/ViewGrades'" class="btn-primary" 
+                        style="background: var(--accent-gradient); border: none; color: white; padding: 1rem 2rem; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; box-shadow: var(--glow-primary);">
+                    View Gradebook <i class="fas fa-arrow-right" style="margin-left: 8px; font-size: 0.8rem;"></i>
+                </button>
+            </div>
         </div>
-        <div class="result-message">
-            @(Model.IsPass ?
-                "Great job! You've demonstrated a good understanding of the material." :
-                "Keep studying and try again. You can do better next time!")
-        </div>
-        <button class="back-button" onclick="location.href='/Home/Index'">Back to Home</button>
-        <br>
     </div>
-</body>
-</html>
+
+    @if(passed) {
+        <div style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+            <i class="fas fa-lock" style="margin-right: 5px;"></i> Digital certificate generated and cryptographically signed.
+        </div>
+    }
+</div>

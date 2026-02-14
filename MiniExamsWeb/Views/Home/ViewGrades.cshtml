@@ -1,177 +1,141 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users Exam Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
+﻿@using ExamsBussinessLayer
+@model List<ViewModelData>
+@{
+    ViewData["Title"] = "Assessment Results";
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            color: #005cbf;
-            text-align: center;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #005cbf;
-            color: white;
-            position: sticky;
-            top: 0;
-        }
-
-        tr:hover {
-            background-color: #f0f8ff;
-        }
-
-        .pass {
-            color: #32cd32;
-            font-weight: bold;
-        }
-
-        .fail {
-            color: #ff4500;
-            font-weight: bold;
-        }
-
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        button, select, input {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid #005cbf;
-        }
-
-        button {
-            background-color: #005cbf;
-            color: white;
-            cursor: pointer;
-        }
-
-            button:hover {
-                background-color: #003d82;
-            }
-
-        .percentage {
-            font-weight: bold;
-        }
-
-        .hidden-row {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Users Exam Results</h1>
-
-        <div class="controls">
-            <select id="filterStatus">
-                <option value="all">All Results</option>
-                <option value="pass">Passed Only</option>
-                <option value="fail">Failed Only</option>
-            </select>
-            <input type="text" id="searchInput" placeholder="Search users or exams...">
-        </div>
-
-        <table id="resultsTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Exam Title</th>
-                    <th>Points Earned</th>
-                    <th>Total Points</th>
-                    <th>Percentage</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                @foreach (ViewModelData data in Model)
-                {
-                    <tr class="data-row"
-                        data-username="@data.Username.ToLower()"
-                        data-examtitle="@data.ExamTitle.ToLower()"
-                        data-status="@(data.Status ? "pass" : "fail")">
-                        <td>@data.ID</td>
-                        <td>@data.Username</td>
-                        <td>@data.ExamTitle</td>
-                        <td>@data.Score</td>
-                        <td>@data.TotalPoint</td>
-                        <td class="percentage">@data.Percentage.ToString("0.0")%</td>
-                        <td class="@(data.Status ? "pass" : "fail")">@(data.Status ? "Pass" : "Fail")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<div class="animate-fade-in">
+    <div class="page-header" style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Academic Performance</h1>
+        <p style="color: var(--text-secondary);">Review your examination history and certification status.</p>
     </div>
 
+    <!-- Quick Stats for Results -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count(u => u.Status)</div>
+                <div class="label">Passes</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count(u => !u.Status)</div>
+                <div class="label">Re-attempts</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary);">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@((Model.Count > 0 ? Model.Average(m => m.Percentage) : 0).ToString("N0"))%</div>
+                <div class="label">Global Average</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--border-color);">
+        <!-- Table Controls -->
+        <div style="padding: 1.5rem; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+            <div style="display: flex; gap: 15px; flex: 1;">
+                 <div style="position: relative; flex: 1; max-width: 400px;">
+                    <i class="fas fa-search" style="position: absolute; left: 15px; top: 12px; color: var(--text-muted);"></i>
+                    <input type="text" id="searchInput" placeholder="Search by student or exam title..." 
+                           style="width: 100%; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 10px 10px 10px 40px; border-radius: var(--radius-md); color: var(--text-primary); outline: none;"
+                           oninput="filterResults()">
+                </div>
+                <select id="filterStatus" onchange="filterResults()"
+                        style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; cursor: pointer;">
+                    <option value="all">All Results</option>
+                    <option value="pass">Passed</option>
+                    <option value="fail">Failed</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grade Table -->
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; background: rgba(255,255,255,0.03);">
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Certificate Holder</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Exams Conducted</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Score Breakdown</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Performance</th>
+                        <th style="padding: 1.25rem 1.5rem; color: var(--text-secondary); font-weight: 500;">Outcome</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsGrid">
+                    @foreach (var result in Model)
+                    {
+                        <tr class="result-row" data-search="@(result.Username.ToLower() + " " + result.ExamTitle.ToLower())" data-status="@(result.Status ? "pass" : "fail")"
+                            style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(129, 140, 248, 0.1); color: var(--accent-secondary); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <span style="font-weight: 600;">@result.Username</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; color: var(--text-secondary);">@result.ExamTitle</td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <span style="font-weight: 700; color: var(--text-primary);">@result.Score</span>
+                                <span style="color: var(--text-muted);">/ @result.TotalPoint</span>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; width: 80px;">
+                                        <div style="height: 100%; width: @result.Percentage%; background: @(result.Status ? "var(--success)" : "var(--danger)"); border-radius: 3px; box-shadow: 0 0 10px @(result.Status ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)");"></div>
+                                    </div>
+                                    <span style="font-weight: 700; font-size: 0.9rem;">@result.Percentage%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                @if (result.Status)
+                                {
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                                        <i class="fas fa-check" style="font-size: 0.6rem;"></i> Certified
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                                        <i class="fas fa-redo" style="font-size: 0.6rem;"></i> Incomplete
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
     <script>
-        // Function to filter data
-        function filterData() {
-            const statusFilter = document.getElementById('filterStatus').value;
+        function filterResults() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('.data-row');
+            const statusFilter = document.getElementById('filterStatus').value;
+            const rows = document.querySelectorAll('.result-row');
 
             rows.forEach(row => {
-                const username = row.getAttribute('data-username');
-                const examTitle = row.getAttribute('data-examtitle');
+                const text = row.getAttribute('data-search');
                 const status = row.getAttribute('data-status');
-
-                // Check status filter
-                const statusMatch = statusFilter === 'all' ||
-                                  (statusFilter === 'pass' && status === 'pass') ||
-                                  (statusFilter === 'fail' && status === 'fail');
-
-                // Check search term
-                const searchMatch = searchTerm === '' ||
-                                  username.includes(searchTerm) ||
-                                  examTitle.includes(searchTerm);
-
-                // Show/hide row based on filters
-                if (statusMatch && searchMatch) {
-                    row.classList.remove('hidden-row');
-                } else {
-                    row.classList.add('hidden-row');
-                }
+                
+                const matchesSearch = text.includes(searchTerm);
+                const matchesStatus = statusFilter === 'all' || status === statusFilter;
+                
+                row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
             });
         }
-
-        // Event listeners for filters
-        document.getElementById('filterStatus').addEventListener('change', filterData);
-        document.getElementById('searchInput').addEventListener('input', filterData);
-
-        // Initialize by filtering once when page loads
-        document.addEventListener('DOMContentLoaded', filterData);
     </script>
-</body>
-</html>
+}

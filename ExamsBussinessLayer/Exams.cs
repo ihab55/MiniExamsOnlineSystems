@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer;
+using DataAccessLayer.DTOs;
 
 namespace BussinessLayer
 {
@@ -22,35 +23,24 @@ namespace BussinessLayer
         _enMode _Mode;
         public static List<Exams> GetAllExam()
         {
-            DataTable dt = clsExams.GetAllExams();
-            List<Exams> examsList = new List<Exams>();
-            foreach (DataRow dr in dt.Rows)
-            {
-                examsList.Add(
-                    Find((int)dr["ID"])
-                    );
-            }
-            return examsList;
+            var examDTOs = clsExams.GetAllExams();
+            return examDTOs.Select(dto => new Exams(dto)).ToList();
         }
-        public string AdminName()
+
+        public string Admin { get; private set; }
+
+        private Exams(ExamDTO dto)
         {
-            string name = "";
-            if (DataAccessLayer.clsExams.GetAdminName(CreateByAdmin, ref name))
-            {
-                return name;
-            }
-            return "";
-        }
-        private Exams(int id, string title, string description, int quizetime, DateTime createdate, int creatbyadmin)
-        {
-            ID = id;
-            Title = title;
-            Description = description;
-            QuizTime = quizetime;
-            CreatedDate = createdate;
-            CreateByAdmin = creatbyadmin;
+            ID = dto.ID;
+            Title = dto.Title;
+            Description = dto.Description;
+            QuizTime = dto.QuizTime;
+            CreatedDate = dto.CreatedDate;
+            CreateByAdmin = dto.CreatedByAdminID;
+            Admin = dto.AdminName;
             _Mode = _enMode._enUpdate;
         }
+
         public Exams()
         {
             ID = -99;
@@ -61,18 +51,11 @@ namespace BussinessLayer
             CreateByAdmin = 0;
             _Mode = _enMode._enAddNew;
         }
+
         public static Exams Find(int id)
         {
-            string title = "";
-            string description = "";
-            int quizTime = 0;
-            DateTime createdDate = DateTime.Now;
-            int createByAdmin = 0;
-            if (DataAccessLayer.clsExams.GetExamByID(id, ref title, ref description, ref quizTime, ref createdDate, ref createByAdmin))
-            {
-                return new Exams(id, title, description, quizTime, createdDate, createByAdmin);
-            }
-            return null;
+            var dto = clsExams.GetExamByID(id);
+            return dto != null ? new Exams(dto) : null;
         }
 
         private bool _AddExams()

@@ -5,30 +5,45 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.DTOs;
 
 namespace DataAccessLayer
 {
     public class clsUsersExam
     {
-        public static DataTable GetAllUsersExam()
+        public static List<UserExamDTO> GetAllUsersExam()
         {
-            DataTable dtUsersExam = new DataTable();
-            SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName);
-            string query = "SELECT * FROM UsersExam";
-            SqlCommand command = new SqlCommand(query, connection);
-            try
+            var results = new List<UserExamDTO>();
+            using (SqlConnection connection = new SqlConnection(DataAccessSetting.ConnectingName))
             {
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                dtUsersExam.Load(reader);
-                reader.Close();
+                string query = @"
+                    SELECT UE.ID, U.UserName, E.Title as ExamTitle, UE.NumOfPoint, UE.TotalPoint, UE.IsPass, UE.TakenDate
+                    FROM UsersExam UE
+                    JOIN Users U ON UE.UserID = U.ID
+                    JOIN Exams E ON UE.ExamID = E.ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        results.Add(new UserExamDTO
+                        {
+                            ID = (int)reader["ID"],
+                            UserName = (string)reader["UserName"],
+                            ExamTitle = (string)reader["ExamTitle"],
+                            Score = (int)reader["NumOfPoint"],
+                            TotalPoint = (int)reader["TotalPoint"],
+                            IsPass = (bool)reader["IsPass"],
+                            TakenDate = (DateTime)reader["TakenDate"]
+                        });
+                    }
+                    reader.Close();
+                }
+                catch (Exception ex) { }
             }
-            catch (Exception ex)
-            {
-                dtUsersExam = null;
-            }
-            finally { connection.Close(); }
-            return dtUsersExam;
+            return results;
         }
         public static bool GetUserExamByID(int id, ref int NumOfPoint, ref int Total, ref bool Ispass, ref DateTime TakenDate,
             ref int userid, ref int examid)

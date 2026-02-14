@@ -164,6 +164,7 @@
     <Compile Include="clsQuestions.cs" />
     <Compile Include="clsUsers.cs" />
     <Compile Include="clsUsersExam.cs" />
+    <Compile Include="DTOs.cs" />
     <Compile Include="DataAccessSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

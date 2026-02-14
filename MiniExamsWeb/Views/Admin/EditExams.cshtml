@@ -1,70 +1,150 @@
-﻿@model List<Exams>
+﻿@using BussinessLayer
+@model List<Exams>
+@{
+    ViewData["Title"] = "Manage Exams";
+}
 
-<html lang="en">
+<div class="animate-fade-in">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Manage Exams</h1>
+            <p style="color: var(--text-secondary);">Create, update and manage your online certification exams with ease.</p>
+        </div>
+        <button class="btn-primary" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" 
+                style="background: var(--accent-gradient); border: none; padding: 12px 24px; border-radius: var(--radius-md); color: white; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: var(--glow-primary);">
+            <i class="fas fa-plus"></i> Add New Exam
+        </button>
+    </div>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Edit Exams</title>
-	<link href="~/css/EditExamsStyle.css" rel="stylesheet" />
-</head>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary);">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@Model.Count</div>
+                <div class="label">Total Exams</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">@((Model.Count > 0 ? Model.Average(e => e.QuizTime) : 0).ToString("N0"))m</div>
+                <div class="label">Avg Duration</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">Live</div>
+                <div class="label">System Status</div>
+            </div>
+        </div>
+    </div>
 
-<body>
-	<!-- Header -->
-	<header class="admin-header">
-		<h1>Edit Exams</h1>
-		<button class="logout-button" onclick="location.href='/Home/Login'">Logout</button>
-	</header>
+    <!-- Exam Table Container -->
+    <div class="card" style="margin-bottom: 2rem; overflow: hidden;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02);">
+            <h3 style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-list-ul" style="color: var(--accent-primary);"></i> Active Exams
+            </h3>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="premium-table" style="width: 100%; border-collapse: collapse;">
+                <thead style="background: rgba(255,255,255,0.03);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-secondary);">Title & Description</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-secondary);">Quiz Time</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-secondary);">Created On</th>
+                        <th style="padding: 1rem; text-align: left; color: var(--text-secondary);">Created By</th>
+                        <th style="padding: 1rem; text-align: right; color: var(--text-secondary);">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exam in Model)
+                    {
+                        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                            <td style="padding: 1.25rem 1rem;">
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <span style="font-weight: 600; color: var(--text-primary);">@exam.Title</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">@exam.Description</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1rem;">
+                                <span style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                                    <i class="far fa-clock"></i> @exam.QuizTime min
+                                </span>
+                            </td>
+                            <td style="padding: 1.25rem 1rem; font-size: 0.9rem;">@exam.CreatedDate.ToString("MMM dd, yyyy")</td>
+                            <td style="padding: 1.25rem 1rem;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-user-shield" style="font-size: 0.8rem;"></i> @exam.Admin
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1rem; text-align: right;">
+                                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                    <a href="/Admin/EditQuestion?id=@exam.ID" 
+                                       style="padding: 8px; border-radius: 8px; background: rgba(56, 189, 248, 0.1); color: var(--accent-primary); border: none; cursor: pointer; transition: all 0.2s;"
+                                       onmouseover="this.style.background='var(--accent-primary)'; this.style.color='white'"
+                                       onmouseout="this.style.background='rgba(56, 189, 248, 0.1)'; this.style.color='var(--accent-primary)'">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/Admin/DeleteExam" method="post" style="display:inline;" onsubmit="return confirm('Danger! Are you sure you want to delete this exam and all associated questions?')">
+                                        <input type="hidden" name="id" value="@exam.ID" />
+                                        <button type="submit" 
+                                                style="padding: 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: none; cursor: pointer; transition: all 0.2s;"
+                                                onmouseover="this.style.background='var(--danger)'; this.style.color='white'"
+                                                onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='var(--danger)'">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<!-- Exam Form -->
-	<div class="exam-form">
-		<h2>Add Exam</h2>
-		<form action="/Admin/SaveExam" method="get">
-			<input type="text" name="Title" placeholder="Enter exam title" required />
-			<textarea name="Description" placeholder="Enter exam description" required></textarea>
-			<input type="text" name="QuizTime" placeholder="Enter quiz time (e.g.,60 min)" required />
-			<button type="submit" class="action-button">Save Exam</button>
-		</form>
-	</div>
-
-	<!-- Exam Table -->
-	<div class="exam-table">
-		<h2>Exams List</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Description</th>
-					<th>Quiz Time</th>
-					<th>Created Date</th>
-					<th>Created By Admin</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (Exams exam in Model)
-				{
-					<tr>
-						<td>@exam.Title</td>
-						<td>@exam.Description</td>
-						<td>@exam.QuizTime</td>
-						<td>@exam.CreatedDate.ToShortDateString()</td>
-						<td>@exam.AdminName()</td>
-						<td>
-							<form action="/Admin/EditQuestion" method="get" style="display:inline;">
-								<input type="hidden" name="id" value="@exam.ID" />
-								<button type="submit" class="edit-button">Edit</button>
-							</form>
-							<form action="/Admin/DeleteExam?id=@exam.ID" method="post" style="display:inline;">
-								<input type="hidden" name="id" value="@exam.ID" />
-								<button type="submit" class="delete-button">Delete</button>
-							</form>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
-</body>
-
-</html>
+    <!-- Add Exam Form -->
+    <div class="card" id="add-exam-card">
+        <div style="padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-magic" style="color: var(--accent-secondary);"></i> Create New Exam
+            </h3>
+        </div>
+        <form action="/Admin/SaveExam" method="get" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Exam Title</label>
+                <input type="text" name="Title" placeholder="e.g. Full Stack Development Quiz" required 
+                       style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; transition: border-color 0.2s;"
+                       onfocus="this.style.borderColor='var(--accent-primary)'" onblur="this.style.borderColor='var(--border-color)'" />
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Duration (Minutes)</label>
+                <input type="number" name="QuizeTime" value="60" required 
+                       style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; transition: border-color 0.2s;"
+                       onfocus="this.style.borderColor='var(--accent-primary)'" onblur="this.style.borderColor='var(--border-color)'" />
+            </div>
+            <div style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Exam Description</label>
+                <textarea name="Description" placeholder="Enter a detailed description of the exam objectives..." required rows="4"
+                          style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); color: var(--text-primary); outline: none; resize: none; transition: border-color 0.2s;"
+                          onfocus="this.style.borderColor='var(--accent-primary)'" onblur="this.style.borderColor='var(--border-color)'"></textarea>
+            </div>
+            <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button type="submit" class="btn-primary" 
+                        style="background: var(--accent-gradient); border: none; padding: 14px 40px; border-radius: var(--radius-md); color: white; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--glow-primary)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Launch Exam
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

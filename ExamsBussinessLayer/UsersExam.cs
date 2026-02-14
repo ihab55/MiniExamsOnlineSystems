@@ -1,10 +1,8 @@
-﻿using System;
+﻿using DataAccessLayer;
+using DataAccessLayer.DTOs;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessLayer;
+using System;
 
 namespace BussinessLayer
 {
@@ -25,15 +23,20 @@ namespace BussinessLayer
 
         public static List<UsersExam> GetAllUsersExam()
         {
-            List<UsersExam> lstUsersExam = new List<UsersExam>();
-            DataTable dt = clsUsersExam.GetAllUsersExam();
-            foreach (DataRow dr in dt.Rows) {
-                lstUsersExam.Add(
-                    Find((int)dr["ID"])
-                    );
-            }
-            return lstUsersExam;
+            var dtos = clsUsersExam.GetAllUsersExam();
+            return dtos.Select(dto => new UsersExam(dto)).ToList();
         }
+
+        private UsersExam(UserExamDTO dto)
+        {
+            ID = dto.ID;
+            NumOfPoint = dto.Score;
+            TotalPoint = dto.TotalPoint;
+            IsPass = dto.IsPass;
+            TakenDate = dto.TakenDate;
+            _Mode = _enMode._enUpdate;
+        }
+
         private UsersExam(int id, int numofpoint, int total, bool ispass, DateTime takenday, int userid, int examid)
         {
             ID = id;

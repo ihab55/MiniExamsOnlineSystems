@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using BussinessLayer;
 using DataAccessLayer;
 
+using DataAccessLayer.DTOs;
+
 namespace ExamsBussinessLayer
 {
     public  class ViewModelData
@@ -20,22 +22,17 @@ namespace ExamsBussinessLayer
         public bool Status { get; set; } 
         public static List<ViewModelData> GetAllUsersExams()
         {
-            DataTable dtUserExam = clsUsersExam.GetAllUsersExam();
-            List<ViewModelData> viewModelDataList = new List<ViewModelData>();
-            foreach (DataRow row in dtUserExam.Rows)
+            var dtos = clsUsersExam.GetAllUsersExam();
+            return dtos.Select(dto => new ViewModelData
             {
-                viewModelDataList.Add(new ViewModelData
-                {
-                    ID = (int)row["ID"],
-                    Username = Users.Find((int)row["UserID"]).UserName,
-                    ExamTitle = Exams.Find((int)row["ExamID"]).Title,
-                    Score = (int)row["NumOfPoint"],
-                    TotalPoint = (int)row["TotalPoint"],
-                    Percentage = ((int)row["NumOfPoint"] * 100) / ((int)row["TotalPoint"]),
-                    Status = (bool)row["IsPass"]
-                });
-            }
-            return viewModelDataList;
+                ID = dto.ID,
+                Username = dto.UserName,
+                ExamTitle = dto.ExamTitle,
+                Score = dto.Score,
+                TotalPoint = dto.TotalPoint,
+                Percentage = dto.Percentage,
+                Status = dto.IsPass
+            }).ToList();
         }
     }
 }

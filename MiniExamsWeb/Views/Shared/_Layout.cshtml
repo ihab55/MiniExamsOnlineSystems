@@ -1,3 +1,131 @@
-﻿
-            @RenderBody()
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var controllerName = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var isAdminArea = controllerName == "Admin";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MiniExams Professional</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Design System -->
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    @RenderSection("Styles", required: false)
+</head>
+<body class="theme-dark">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar @(isAdminArea ? "admin-mode" : "student-mode")">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas @(isAdminArea ? "fa-shield-halved" : "fa-graduation-cap")"></i>
+                    <span>@(isAdminArea ? "Exams Admin" : "MiniExams")</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                @if (isAdminArea)
+                {
+                    <a href="/Admin/Index" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/Admin/EditExams" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "EditExams" || ViewContext.RouteData.Values["Action"]?.ToString() == "EditQuestion" ? "active" : "")">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Manage Exams</span>
+                    </a>
+                    <a href="/Admin/EditUser" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "EditUser" ? "active" : "")">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Manage Users</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="/Home/Index" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="fas fa-book-reader"></i>
+                        <span>Available Exams</span>
+                    </a>
+                    <a href="/Home/ViewGrades" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "ViewGrades" ? "active" : "")">
+                        <i class="fas fa-medal"></i>
+                        <span>My Grades</span>
+                    </a>
+                }
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" style="background: @(isAdminArea ? "rgba(245, 158, 11, 0.1)" : "rgba(16, 185, 129, 0.1)"); color: @(isAdminArea ? "var(--warning)" : "var(--success)"); border: 1px solid rgba(255,255,255,0.1);">
+                        <i class="fas @(isAdminArea ? "fa-user-tie" : "fa-user-graduate")"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">@(isAdminArea ? "Admin Hub" : "Student Area")</span>
+                        <span class="user-role" style="color: @(isAdminArea ? "var(--warning)" : "var(--success)")">@(isAdminArea ? "System Admin" : "Candidate")</span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="location.href='/Home/Login'" title="Secure Exit">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </div>
+        </aside>
 
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search exams or resources..." />
+                </div>
+                <div class="top-actions">
+                    <div class="notification-badge">
+                        <i class="far fa-bell"></i>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="date-display">
+                        <i class="far fa-clock"></i>
+                        <span id="live-time">@DateTime.Now.ToString("HH:mm")</span>
+                        <span style="opacity: 0.5; margin-left: 10px;">@DateTime.Now.ToString("dd MMM")</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-container">
+                @RenderBody()
+            </div>
+            
+            <footer class="footer">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <p>&copy; 2026 MiniExams Online. Modern Assessment Ecosystem.</p>
+                    <div style="display: flex; gap: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                        <span>V2.4.0-Stable</span>
+                        <span style="display: flex; align-items: center; gap: 5px;"><i class="fas fa-circle" style="font-size: 0.5rem; color: var(--success);"></i> System Live</span>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Update time dynamically
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const target = document.getElementById('live-time');
+            if(target) target.textContent = timeStr;
+        }, 30000);
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

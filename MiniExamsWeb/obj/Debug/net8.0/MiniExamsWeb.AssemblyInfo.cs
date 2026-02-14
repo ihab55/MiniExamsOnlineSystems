@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniExamsWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb6b7ce88f8354cfdd32ac841f3f1212b60cd651")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniExamsWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniExamsWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

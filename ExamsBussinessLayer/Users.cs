@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer;
+using DataAccessLayer.DTOs;
 
 namespace BussinessLayer
 {
@@ -23,22 +24,15 @@ namespace BussinessLayer
         public bool IsAdmin;
         public static List<Users> GetAllUsers()
         {
-            DataTable dt = clsUsers.GetAllUsers();
-            List<Users> users = new List<Users>();
-            foreach (DataRow dr in dt.Rows)
-            {
-                users.Add(
-                    Find((int)dr["ID"])
-                    );
-            }
-            return users;
+            var userDTOs = clsUsers.GetAllUsers();
+            return userDTOs.Select(dto => new Users(dto)).ToList();
         }
-        private Users(int id, string userName, string password, bool isadmin)
+        private Users(UserDTO dto)
         {
-            ID = id;
-            UserName = userName;
-            PassWord = password;
-            IsAdmin = isadmin;
+            ID = dto.ID;
+            UserName = dto.UserName;
+            PassWord = dto.PassWord;
+            IsAdmin = dto.IsAdmin;
             _Mode = _enMode._enUpdate;
         }
         public Users()
@@ -51,25 +45,13 @@ namespace BussinessLayer
         }
         public static Users Find(int id)
         {
-            string username = "";
-            string password = "";
-            bool isadmin = false;
-            if (clsUsers.GetUserByID(id, ref username, ref password, ref isadmin))
-            {
-                return new Users(id, username, password, isadmin);
-            }
-            return null;
+            var dto = clsUsers.GetUserByID(id);
+            return dto != null ? new Users(dto) : null;
         }
         public static Users Find(string username)
         {
-            int id = -99;
-            string password = "";
-            bool isadmin = false;
-            if (clsUsers.GetUserByUserName(username, ref id, ref password, ref isadmin))
-            {
-                return new Users(id, username, password, isadmin);
-            }
-            return null;
+            var dto = clsUsers.GetUserByUserName(username);
+            return dto != null ? new Users(dto) : null;
         }
         private bool _AddUsers()
         {

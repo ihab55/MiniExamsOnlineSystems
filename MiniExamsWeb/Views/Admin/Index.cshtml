@@ -1,120 +1,77 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <style>
-        /* General Body Styling */
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #eeeeee; /* Primary color: white */
-        }
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
 
-        /* Header Styling */
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #005cbf; /* Secondary color: Pepsi blue */
-            color: white;
-        }
+<div class="animate-fade-in">
+    <div class="page-header" style="margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Admin Dashboard</h1>
+        <p style="color: var(--text-secondary);">Welcome back to the command center. Monitor and manage your online testing environment.</p>
+    </div>
 
-            .admin-header h1 {
-                margin: 0;
-                font-size: 2em;
-            }
-
-        .logout-button {
-            background-color: #ff4500; /* Bright orange */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-            .logout-button:hover {
-                background-color: #ff6347; /* Lighter orange */
-            }
-
-        /* Admin Container Styling */
-        .admin-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            padding: 40px;
-        }
-
-        /* Admin Card Styling */
-        .admin-card {
-            background: #ffffff; /* White background */
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            padding: 30px;
-            width: 300px;
-            height: 200px;
-            text-align: center;
-            cursor: pointer;
-            border: 4px solid #005cbf; /* Pepsi blue border */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-            .admin-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 12px rgba(0,0,0,0.3);
-            }
-
-            .admin-card h2 {
-                color: #005cbf; /* Pepsi blue */
-                margin-bottom: 10px;
-                font-size: 1.8em;
-            }
-
-            .admin-card p {
-                color: #4682b4; /* Steel blue */
-                font-size: 1em;
-            }
-
-        /* User Card Specific Styling */
-        .users-card {
-            border-color: #ff69b4; /* Hot pink border */
-        }
-
-        /* Exam Card Specific Styling */
-        .exams-card {
-            border-color: #32cd32; /* Lime green border */
-        }
-    </style>
-</head>
-<body>
-    <!-- Header with Logout Button -->
-    <header class="admin-header">
-        <h1>Admin Dashboard</h1>
-        <button class="logout-button" onclick="location.href='/Home/Login'">Logout</button>
-    </header>
-
-    <!-- Admin Dashboard Cards -->
-    <div class="admin-container">
-        <div class="admin-card users-card" onclick="location.href='/Admin/EditUser'">
-            <h2>Manage Users</h2>
-            <p>View, add, edit, or delete users.</p>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary);">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">Active</div>
+                <div class="label">System Monitoring</div>
+            </div>
         </div>
-        <div class="admin-card exams-card" onclick="location.href='/Admin/EditExams'">
-            <h2>Manage Exams</h2>
-            <p>View, create, or update exams.</p>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="stat-info">
+                <div class="value">99.9%</div>
+                <div class="label">Uptime Status</div>
+            </div>
         </div>
     </div>
 
-    <script>
-        // Example for future use if needed
-        console.log("Admin Dashboard Loaded Successfully!");
-    </script>
-</body>
-</html>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+        <!-- Manage Users Card -->
+        <div class="card" onclick="location.href='/Admin/EditUser'" 
+             style="cursor: pointer; transition: all 0.3s; border-top: 5px solid var(--accent-secondary);"
+             onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-primary)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--accent-secondary)'">
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div style="width: 64px; height: 64px; border-radius: 16px; background: rgba(129, 140, 248, 0.1); color: var(--accent-secondary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h2 style="font-size: 1.75rem; margin-bottom: 10px;">User Management</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Take full control over user profiles, access levels, and security credentials.</p>
+                    <span style="color: var(--accent-secondary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                        Explore Directory <i class="fas fa-arrow-right"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Exams Card -->
+        <div class="card" onclick="location.href='/Admin/EditExams'" 
+             style="cursor: pointer; transition: all 0.3s; border-top: 5px solid var(--accent-primary);"
+             onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--accent-secondary)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--accent-primary)'">
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div style="width: 64px; height: 64px; border-radius: 16px; background: rgba(56, 189, 248, 0.1); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <div>
+                    <h2 style="font-size: 1.75rem; margin-bottom: 10px;">Exam Architect</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Design complex assessments, customize durations, and manage the question bank.</p>
+                    <span style="color: var(--accent-primary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                        Manage Assessments <i class="fas fa-arrow-right"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Insights -->
+    <div class="card" style="margin-top: 2.5rem; background: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 1)); border: 1px solid var(--border-color);">
+        <h3 style="margin-bottom: 1rem;"><i class="fas fa-bolt" style="color: var(--warning);"></i> Quick Insight</h3>
+        <p style="color: var(--text-secondary);">The DTO-based architecture is now live, ensuring maximum data transfer efficiency between regions and layers. All systems nominal.</p>
+    </div>
+</div>

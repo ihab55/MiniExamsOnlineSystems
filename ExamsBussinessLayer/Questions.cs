@@ -1,10 +1,7 @@
-﻿using System;
+﻿using DataAccessLayer;
+using DataAccessLayer.DTOs;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessLayer;
 
 namespace BussinessLayer
 {
@@ -20,35 +17,23 @@ namespace BussinessLayer
         public List<string> Options;
         public int CorrectAnswer;
         public int ExamID;
-        public static DataTable GetAllQuestions()
+        public static List<Questions> GetAllQuestions()
         {
-            return clsQuestions.GetAllQuestions();
+            var questionDTOs = clsQuestions.GetAllQuestions();
+            return questionDTOs.Select(dto => new Questions(dto)).ToList();
         }
         public static List<Questions> GetAllQuestionsInExam(int examid)
         {
-            DataTable dt = clsQuestions.GetAllQuestions();
-            List<Questions> questions = new List<Questions>();
-            foreach (DataRow dr in dt.Rows)
-            {
-                if ((int)dr["ExamID"] == examid)
-                {
-
-                    questions.Add(
-
-                        Find((int)dr["ID"])
-                        );
-                }
-            }
-            return questions;
-
+            var questionDTOs = clsQuestions.GetAllQuestionsInExam(examid);
+            return questionDTOs.Select(dto => new Questions(dto)).ToList();
         }
-        private Questions(int id, string text, List<string> options, int correctanswer, int examid)
+        private Questions(QuestionDTO dto)
         {
-            ID = id;
-            Options = options;
-            CorrectAnswer = correctanswer;
-            ExamID = examid;
-            Text = text;
+            ID = dto.ID;
+            Options = dto.Options;
+            CorrectAnswer = dto.CorrectAnswer;
+            ExamID = dto.ExamID;
+            Text = dto.Text;
             _Mode = _enMode._enUpdate;
         }
         public Questions()
@@ -61,15 +46,8 @@ namespace BussinessLayer
         }
         public static Questions Find(int id)
         {
-            List<string> option = new List<string> { "", "", "", "" };
-            int correctanswer = 0;
-            int examid = 0;
-            string text = "";
-            if (clsQuestions.GetQuestionByID(id, ref text, option, ref correctanswer, ref examid))
-            {
-                return new Questions(id, text, option, correctanswer, examid);
-            }
-            return null;
+            var dto = clsQuestions.GetQuestionByID(id);
+            return dto != null ? new Questions(dto) : null;
         }
         private bool _AddQuestions()
         {

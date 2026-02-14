@@ -1,42 +1,54 @@
-﻿
+﻿@using BussinessLayer
+@model List<Exams>
+@{
+    ViewData["Title"] = "Student Portal";
+}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Page</title>
-    <link href="~/css/ExamsStyle.css" rel="stylesheet" />
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <h1>Exam Website</h1>
-        <div class="nav-container">
-            <nav class="nav-links">
-                <a href="@Url.Action("Index", "Home")">Home</a>
-                <a href="@Url.Action("ViewGrades", "Home")">View Grades</a>
-            </nav>
-            <button class="logout-button" onclick="location.href='/Home/Login'">Logout</button>
-        </div>
-    </header>
+<div class="animate-fade-in">
+    <div class="page-header" style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Available Assessments</h1>
+        <p style="color: var(--text-secondary);">Select an exam to begin your certification journey. Good luck!</p>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <h1 class="title">Welcome to the Exam Page!</h1>
-        <div class="exam-container">
-            @foreach (Exams exam in Model)
-            {
-                <div class="card">
-                    <h3>Exam Title: @exam.Title</h3>
-                    <p>Description: @exam.Description</p>
-                    <p>Exam Time: @exam.QuizTime</p>
-                    <p>Created Date: @exam.CreatedDate.ToShortDateString()</p>
-                    <p>Created By: @exam.AdminName()</p>
-                    <button onclick="location.href='/Home/TakeExam?id=@exam.ID'" class="action-button">View Exam Details</button>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+        @foreach (var exam in Model)
+        {
+            <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border-color); transition: all 0.3s;"
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--accent-primary)'; this.style.backgroundColor='rgba(30, 41, 59, 1)'"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--border-color)'; this.style.backgroundColor='var(--bg-secondary)'">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 1.4rem; color: var(--text-primary);">@exam.Title</h3>
+                        <span style="background: rgba(56, 189, 248, 0.1); color: var(--accent-primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                            Live
+                        </span>
+                    </div>
+                    <p style="color: var(--text-secondary); height: 60px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 1.5rem; font-size: 0.95rem;">
+                        @exam.Description
+                    </p>
+                    <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+                            <i class="far fa-clock"></i> @exam.QuizTime min
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+                            <i class="far fa-calendar-alt"></i> @exam.CreatedDate.ToShortDateString()
+                        </div>
+                    </div>
                 </div>
-            }
-        </div>
-    </main>
-</body>
-</html>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--accent-secondary);">
+                            <i class="fas fa-signature"></i>
+                        </div>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">@exam.Admin</span>
+                    </div>
+                    <button onclick="location.href='/Home/TakeExam?id=@exam.ID'" class="btn-primary" 
+                            style="background: var(--accent-gradient); border: none; padding: 10px 20px; border-radius: var(--radius-md); color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                        Launch <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-left: 4px;"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

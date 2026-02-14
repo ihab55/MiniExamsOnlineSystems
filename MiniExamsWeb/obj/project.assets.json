@@ -6789,11 +6789,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj",
+      "projectUniqueName": "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\MiniExamsWeb\\MiniExamsWeb.csproj",
       "projectName": "MiniExamsWeb",
-      "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\MiniExamsWeb.csproj",
+      "projectPath": "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\MiniExamsWeb\\MiniExamsWeb.csproj",
       "packagesPath": "C:\\Users\\Ehab\\.nuget\\packages\\",
-      "outputPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\MiniExamsWeb\\obj\\",
+      "outputPath": "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\MiniExamsWeb\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -6808,14 +6808,15 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj": {
-              "projectPath": "D:\\Courses\\NewProjects\\FinalwbMiniSystemsSoultion\\ExamsBussinessLayer\\BussinessLayer.csproj"
+            "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\ExamsBussinessLayer\\BussinessLayer.csproj": {
+              "projectPath": "D:\\Courses\\Projects\\MiniSystemsSoultion\\MiniExamsOnlineSystems\\ExamsBussinessLayer\\BussinessLayer.csproj"
             }
           }
         }
@@ -6830,7 +6831,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -6868,7 +6869,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
